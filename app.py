@@ -91,7 +91,7 @@ NOMBRES_ES = {
     "GDP": "PIB",
 }
 
-# Con Selectbox 
+# Configuaración para que se visualice el despliegue de nombres en español y añade valor númerico.
 
 def selectbox_codigo(label, opciones_dict, valor_defecto, key, help_text=None):
 
@@ -150,20 +150,14 @@ st.title("🎓 Sistema Inteligente de Alerta Temprana para la Predicción de la 
 
 st.divider()
 
-# ---------------------------------------------------------------------------
+
 # Formulario de entrada
-# ---------------------------------------------------------------------------
+
 with st.form("formulario_estudiante"):
 
-    # -------------------------------------------------------------------
-    # Las siguientes 9 variables son, en ese orden, las de mayor
-    # importancia para el modelo (modelo.feature_importances_) — hay un
-    # corte natural en el ranking justo después de la novena (la décima,
-    # "Application mode", ya pesa menos de la mitad que la novena). Por
-    # eso son las únicas visibles en el formulario principal; el resto
-    # queda oculto y se autocompleta con la moda.
-    # -------------------------------------------------------------------
-    st.subheader("🎯 Datos académicos y de admisión")
+    # Vizualización de las 9 variables
+    
+    st.subheader("Datos académicos y de admisión")
     c1, c2 = st.columns(2)
     with c1:
         course = selectbox_codigo("Curso / carrera", COURSE, int(mediana("Course")), "course")
@@ -173,7 +167,7 @@ with st.form("formulario_estudiante"):
             value=int(mediana("Age at enrollment")), step=1, key="age"
         )
 
-    st.subheader("📊 Rendimiento — 1er semestre")
+    st.subheader("Rendimiento — 1er semestre")
     c3, c4 = st.columns(2)
     with c3:
         cu1_enrolled = st.number_input(
@@ -194,7 +188,7 @@ with st.form("formulario_estudiante"):
             value=float(mediana("Curricular units 1st sem (grade)")), step=0.1, key="cu1_grade"
         )
 
-    st.subheader("💰 Situación económica")
+    st.subheader("Situación económica")
     c5, c6, c7 = st.columns(3)
     with c5:
         tuition_up_to_date = selectbox_codigo(
@@ -207,12 +201,8 @@ with st.form("formulario_estudiante"):
             "¿Tiene beca?", SI_NO, int(mediana("Scholarship holder")), "scholarship"
         )
 
-    # -------------------------------------------------------------------
-    # Variables adicionales (colapsadas): las 19 restantes, todas de
-    # menor peso para el modelo. Se autocompletan con la MODA (valor más
-    # frecuente en dataset_original.csv de cada variable) en vez de la
-    # mediana, y quien quiera más precisión las puede ajustar aquí.
-    # -------------------------------------------------------------------
+    # Configuración de las 19 variables ocultas
+    
     with st.expander("➕ Variables adicionales (menor impacto en el modelo)"):
         cc1, cc2 = st.columns(2)
         with cc1:
@@ -294,9 +284,8 @@ with st.form("formulario_estudiante"):
 
     submitted = st.form_submit_button("🔍 Predecir riesgo de deserción", use_container_width=True)
 
-# ---------------------------------------------------------------------------
-# Predicción
-# ---------------------------------------------------------------------------
+# Configuración para iniciar la predicción
+
 if submitted:
     entrada = {
         "Marital status": marital_status,
@@ -329,7 +318,8 @@ if submitted:
         "GDP": gdp,
     }
 
-    # Se ordena exactamente como feature_names para respetar el orden con el que se entrenó
+    # Conversión del diccionario y visualización de la predicción con recomendación.
+    
     df_entrada = pd.DataFrame([entrada])[feature_names]
 
     pred = modelo.predict(df_entrada)[0]
@@ -355,6 +345,8 @@ if submitted:
         st.metric("Probabilidad de deserción", f"{proba:.1%}")
         st.progress(min(max(proba, 0.0), 1.0))
 
+    #Visualización de las 15 variables con mayor correlación
+    
     st.divider()
     st.subheader("🔎 Variables más influyentes del modelo (top 15)")
     importancias = pd.Series(modelo.feature_importances_, index=feature_names)
