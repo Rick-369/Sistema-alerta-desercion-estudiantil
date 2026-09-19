@@ -370,7 +370,3 @@ if submitted:
         st.dataframe(df_entrada.T.rename(columns={0: "Valor"}))
 
 st.divider()
-st.caption(
-    "Modelo: Random Forest (n_estimators=300, min_samples_leaf=20, class_weight='balanced') · "
-    "28 variables · excluye información del 2º semestre para funcionar como alerta temprana."
-)
